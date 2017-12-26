@@ -1,3 +1,4 @@
+'import RPi.GPIO as GPIO'
 j = None
 motorA_pins = None
 motorB_pins = None
@@ -66,4 +67,31 @@ stepper_code4[int(i + 1 - 1)] = '0,1,0,0'
 stepper_code4[int(i + 1 - 1)] = '0,0,1,0'
 stepper_code4[int(i + 1 - 1)] = '0,0,0,1'
 
-'import RPi.GPIO as GPIO'
+
+
+# Choose a sequence to use
+Seq = Seq1
+StepCount = StepCount1
+
+# Start main loop
+while 1==1:
+
+  for pin in range(0, 4):
+    xpin = StepPins[pin]
+    if Seq[StepCounter][pin]!=0:
+      # print " Step %i Enable %i" %(StepCounter,xpin)
+      GPIO.output(xpin, True)
+    else:
+      GPIO.output(xpin, False)
+
+  StepCounter += 1
+
+  # If we reach the end of the sequence
+  # start again
+  if (StepCounter==StepCount):
+    StepCounter = 0
+  if (StepCounter<0):
+    StepCounter = StepCount
+
+  # Wait before moving on
+  time.sleep(WaitTime)
