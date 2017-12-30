@@ -35,7 +35,7 @@ for pinB in Set_motorB_pins:
 # StepCounter= 0
 #Delay_ = 0.002  # for 4 sequence
 
-Delay_ = 0.5 # for 8 sequence .0009
+Delay_ = 0.05 # for 8 sequence .0009
 
 # this function...
 def motor_block(directionA, directionB,wheel_turns,speed):
@@ -47,13 +47,13 @@ def motor_block(directionA, directionB,wheel_turns,speed):
 	
 	# set speed to zero if the wheel direction changes
 	if (directionA != OldA or directionB != OldB):
-		Delay_ =0.5
+		Delay_ =0.05
 	OldA = directionA
 	OldB = directionB
 	
 	
 	if (speed < Delay_):
-		Delay_ = 0.5 #wheel needs to speed up 
+		Delay_ = 0.05 #wheel needs to speed up 
 		Speedup = -1
 	else: 	
 		Delay_ = speed # wheel slow down
@@ -101,14 +101,22 @@ def motor_block(directionA, directionB,wheel_turns,speed):
     			StepCounter = StepCount
     		
     		if (Speedup == -1 and Delay_>speed): # speed up
-    			Delay_ = Delay_ + (Speedup*0.00001)
+    			Delay_ = Delay_ + (Speedup*0.001)
     		elif (Speedup == 1 and  speed>Delay_): # speed slow down
-    			Delay_ = Delay_ + (Speedup*0.00001)
-    		
+    			Delay_ = Delay_ + (Speedup*0.001)
     		else:
-    			Delay_ = sleep
-    		print " Delay %i" %(Delay_)
+    			Delay_ = speed
+    			Speedup = 0
+    			
+    		if Delay_ < 0.05:
+    		  Delay_ = speed
+    		  Speedup = 0
+    		print Speedup	
+    		print Delay_
     		time.sleep(Delay_)
+	
+	
+	wheel_turns +=1
 	
 	
 	wheel_turns +=1
