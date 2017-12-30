@@ -9,10 +9,10 @@
 
 # Import required libraries
 import time
-import RPi.GPIO as GPIO
+#import RPi.GPIO as GPIO
 
 # GPIO references
-GPIO.setmode(GPIO.BCM)
+#GPIO.setmode(GPIO.BCM)
 
 # Define the GPIO pins
 Set_motorA_pins = [6,13,19,26]
@@ -23,13 +23,13 @@ OldB = 0;
 # Set all pins as output
 for pinA in Set_motorA_pins:
   print "Setup pins A"
-  GPIO.setup(pinA,GPIO.OUT)
-  GPIO.output(pinA, False)
+  #GPIO.setup(pinA,GPIO.OUT)
+  #GPIO.output(pinA, False)
   
 for pinB in Set_motorB_pins:
   print "Setup pins B"
-  GPIO.setup(pinB,GPIO.OUT)
-  GPIO.output(pinB, False)
+  #GPIO.setup(pinB,GPIO.OUT)
+  #GPIO.output(pinB, False)
  
 # Define variables
 # StepCounter= 0
@@ -40,10 +40,13 @@ Delay_ = 0.5 # for 8 sequence .0009
 # this function...
 def motor_block(directionA, directionB,wheel_turns,speed):
 	global Delay_
-	StepCounter= 0
+	global OldA
+	global OldB
+	StepCounter = 0
+	StepCount = 8
 	
 	# set speed to zero if the wheel direction changes
-	if (directionA != OldA OR directionB != OldB):
+	if (directionA != OldA or directionB != OldB):
 		Delay_ =0.5
 	OldA = directionA
 	OldB = directionB
@@ -79,32 +82,33 @@ def motor_block(directionA, directionB,wheel_turns,speed):
 			xpinB = Set_motorB_pins[pin]
 			if Seq_MPB[StepCounter][pin]!=0:
 			  print " BStep %i Enable %i" %(StepCounter,pin)
-			  GPIO.output(xpinB, True)
+			  #GPIO.output(xpinB, True)
 			else:
-			  GPIO.output(xpinB, False)
-			xpinA = Set_motorA_pins[pin]
+			  #GPIO.output(xpinB, False)
+			  xpinA = Set_motorA_pins[pin]
 			if Seq_MPA[StepCounter][pin]!=0:
 			  print " AStep %i Enable %i" %(StepCounter,pin)
-			  GPIO.output(xpinA, True)
+			  #GPIO.output(xpinA, True)
 			else:
-			  GPIO.output(xpinA, False)
+			  pass  
+			  #GPIO.output(xpinA, False)
 			
-		StepCounter += 1
-		
-		if (StepCounter==StepCount):
-			StepCounter = 0
-		if (StepCounter<0):
-			StepCounter = StepCount
-		
-		if (Speedup == -1 AND Delay_>sleep): # speed up
-			Delay_ = Delay_ + (Speedup*0.00001)
-		elif (Speedup == 1 AND speed>Delay_): # speed slow down
-			Delay_ = Delay_ + (Speedup*0.00001)
-		
-		else:
-			Delay_ = sleep
-		
-		time.sleep(Delay_)
+    		StepCounter += 1
+    		
+    		if (StepCounter==StepCount):
+    			StepCounter = 0
+    		if (StepCounter<0):
+    			StepCounter = StepCount
+    		
+    		if (Speedup == -1 and Delay_>speed): # speed up
+    			Delay_ = Delay_ + (Speedup*0.00001)
+    		elif (Speedup == 1 and  speed>Delay_): # speed slow down
+    			Delay_ = Delay_ + (Speedup*0.00001)
+    		
+    		else:
+    			Delay_ = sleep
+    		print " Delay %i" %(Delay_)
+    		time.sleep(Delay_)
 	
 	
 	wheel_turns +=1
@@ -155,3 +159,5 @@ motor_block(1,1,3,0.0005)
 
 
 #GPIO.cleanup()
+
+    
