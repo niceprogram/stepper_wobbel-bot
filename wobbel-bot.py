@@ -48,56 +48,81 @@ def motor_block(directionA, directionB,wheel_turns,speed_percent):
 	global OldA			#old determines if the wheel has changed direction
 	global OldB
 	global Old_speed
-
 	Wheel = 0
-	
+	print " turns %i speed %i" %(wheel_turns,speed_percent)
+	wheel_turns=wheel_turns*4096/8
 	
 	# set speed_percent to zero if the wheel direction changes
 	if (directionA != OldA or directionB != OldB):
-		speed_percent = 0
+		Old_speed = 0
 	
 	OldA = directionA
 	OldB = directionB
 	
 	
-	if (speed_percent < Old_speed):
+	if (speed_percent > Old_speed):
 		Speedup = 1
+		print " Speed"
 	else: 	
 		Speedup = -1 # wheel slow down
-		
+		print " Slow"
 	
 	# wheel squence [0001]	
-	if  (directionA == -1):
-		Seq_MPA = Seq[::-1]
-	elif (directionA == 1):
+	if  (directionA == 1):
+		Seq_MPA = Seq[::1]
+		print " A forward"
+	elif (directionA == -1):
 		Seq_MPA = Seq
+		print " A backward"
 	else: 	
 		Seq_MPA = stepper_off
+		print " A stop"
 		
 	
-	if  (directionB == -1):
-		Seq_MPB = Seq[::-1]
-	elif (directionB == 1):
+	if  (directionB == 1):
+		Seq_MPB = Seq[::1]
+		print " B forward"
+	elif (directionB == -1):
 		Seq_MPB = Seq
+		print " B backward"
 	else: 	
 		Seq_MPB = stepper_off
+		print " B stop"
 	
     #slow down  from 100%-0% in half a turn
-	if (speed_percent > Old_speed):
-		Speedup = -1
+	if (speed_percent < Old_speed):
 		ramp = (Old_speed - speed_percent)   #100-25 = 75 change speed in 4096/2 steps
 		current_speed = Old_speed
 		while Wheel <= wheel_turns and current_speed > speed_percent: #tagret speed
-		    speed_value = (((100-speed_percent)*speedrange/100)+bottom_value)/10000
-			turn_wheel(0.005)  #speed_value
-			current_speed -=1
-		Wheel +=1
+		  speed_value = ((100 - speed_percent) * (speedrange / 100) + bottom_value) / 10000
+		  print " Slowdup %i from %i" %(current_speed,speed_percent)
+		  turn_wheel(speed_value)
+		  current_speed = current_speed - 1
+		  Wheel = Wheel + 1
 	
 	#speed up
-	else: 	
-		Speedup = -1 # wheel slow down	
-	
-	
+	elif (speed_percent > Old_speed):
+		ramp = speed_percent - Old_speed
+		current_speed = Old_speed
+		while Wheel <= wheel_turns and current_speed < speed_percent:
+		  speed_value = ((100 - speed_percent) * (speedrange / 100) + bottom_value) / 10000
+		  print " Sppedup %i from %i" %(current_speed,speed_percent)
+		  turn_wheel(speed_value)
+		  current_speed = current_speed + 1
+		  Wheel = Wheel + 1
+	#contant speed
+	else:
+		pass
+		
+	Speedup = 0
+	print " Speed %i whwwl %i " %(speed_percent,wheel_turns)
+	while Wheel <= wheel_turns:
+		speed_value = ((100 - speed_percent) * (speedrange / 100) + bottom_value) / 10000
+		  
+		turn_wheel(speed_value)
+		Wheel = Wheel + 1
+	print " Done "
+	Old_speed = speed_percent
 
 	
 	
@@ -111,23 +136,21 @@ def turn_wheel(Delay_):
 	for pin in range(0, 4):
 		xpinB = Set_motorB_pins[pin]
 		if Seq_MPB[StepCounter][pin]!=0:
-			print " BStep %i Enable %i" %(StepCounter,pin)
+			#print " BStep %i Enable %i" %(StepCounter,pin)
 			GPIO.output(xpinB, True)
-				  
 		else:
 			GPIO.output(xpinB, False)
-			xpinA = Set_motorA_pins[pin]
+		
+		xpinA = Set_motorA_pins[pin]
 			
 		if Seq_MPA[StepCounter][pin]!=0:
-			print " AStep %i Enable %i" %(StepCounter,pin)
+			#print " AStep %i Enable %i" %(StepCounter,pin)
 			GPIO.output(xpinA, True)
 		else:
-			pass  
 			GPIO.output(xpinA, False)
 				
-		StepCounter += 1
-				
-		time.sleep(Delay_)
+	StepCounter += 1
+	time.sleep(Delay_)
 		
 		
 	
@@ -156,34 +179,9 @@ stepper_off = [0,0,0,0]*8
 
 
 
-# Start main loop
-#while 1==1:
-# motor_block (A,B, turns, speed)
-#motor_block(1,1,2,0.0009)
-#motor_block(-1,-1,3,0.0009)
+
 motor_block(1,1,2,100)
-#motor_block(1,1,2,0.10)
-#motor_block(1,-1,5,0.0009)
-#motor_block(-1,1,5,0.0009)
-
- # for pinB in range(0, 4):
-  #  xpin = Set_motorB_pins[pinB]
-  #  if Seq[StepCounter][pinB]!=0:
-    #print " Step %i Enable %i" %(StepCounter,xpin)
-   #   GPIO.output(xpin, True)
-   # else:
-   #   GPIO.output(xpin, False
- # StepCounter += 1
-
-  # If we reach the end of the sequence
-  # start again
-  #if (StepCounter==StepCount):
-   # StepCounter = 0
-  #if (StepCounter<0):
-  #  StepCounter = StepCount
-
-  # Wait before moving on
-  #time.sleep(Delay_)
+motor_block(1,1,2,50)
 
 
 #GPIO.cleanup()
