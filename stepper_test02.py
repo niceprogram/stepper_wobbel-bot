@@ -41,7 +41,7 @@ for pinB in Set_motorB_pins:
 
 
 
-# this function get the motor to turn
+# this function gets the motor to turn
 def motor_block(directionA, directionB,wheel_turns,speed_percent):
 	global Seq_MPA
 	global Seq_MPB
@@ -179,7 +179,13 @@ Seq[6] = [0,0,0,1]
 Seq[7] = [1,0,0,1]
 
 stepper_off = [0,0,0,0]*8
-
+#
+#
+# start the stepper program
+#
+#
+#
+#
 
 for count in range(10):
   motor_block(1,-1,2,100)
