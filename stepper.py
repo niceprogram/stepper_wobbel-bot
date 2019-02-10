@@ -1,3 +1,5 @@
+# tested and OK 10-02-2019 MIBB and K_
+
 import RPi.GPIO as GPIO
 import time
 
