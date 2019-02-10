@@ -2,6 +2,7 @@
 # Name: wobbelbot
 #
 # Author: niceprogram
+# tested and ok by MIB and K_ 10-02-2019
 #
 # Created: 27-12-2017
 #-----------------------------------
@@ -185,15 +186,14 @@ stepper_off = [0,0,0,0]*8
 #
 #
 #
-#
+# 
+# motor_block(directionA, directionB,wheel_turns,speed_percent):
 
 for count in range(10):
   motor_block(1,-1,2,100)
-  motor_block(-1,1,0.1,0)
+  motor_block(-1,1,2,100)
   motor_block(-1,1,1,50)
-  motor_block(1,-1,0.1,0)
-  motor_block(-1,1,1,0)
-  pass
+  motor_block(1,-1,1,50)
 
 #motor_block(1,-1,2,100)
 #motor_block(-1,1,0.1,0)
